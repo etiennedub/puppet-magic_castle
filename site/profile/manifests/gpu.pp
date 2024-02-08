@@ -99,8 +99,29 @@ class profile::gpu::install::passthrough (
   }
 
   $mig_profile = lookup("terraform.instances.${facts['networking']['hostname']}.specs.mig")
-  if $mig_profile {
+  if $mig_profile and !$mig_profile.empty {
     include profile::gpu::install::mig
+  }
+  else {
+    exec {'disable_mig':
+      command     => 'nvidia-mig-parted apply',
+      unless      => 'nvidia-mig-parted assert',
+      onlyif      => [
+        Package['nvidia-mig-manager'],
+        File['/etc/nvidia-mig-manager/puppet-hooks.yaml'],
+      ],
+      environment => [
+        'MIG_PARTED_CONFIG_FILE=/etc/nvidia-mig-manager/config.yaml',
+        'MIG_PARTED_HOOKS_FILE=/etc/nvidia-mig-manager/puppet-hooks.yaml',
+        'MIG_PARTED_SELECTED_CONFIG=all-disabled',
+        'MIG_PARTED_SKIP_RESET=false',
+      ],
+      path        => ['/usr/bin'],
+      notify      => [
+        Service['nvidia-persistenced'],
+        Service['nvidia-dcgm'],
+      ]
+    }
   }
 
   package { $packages:
