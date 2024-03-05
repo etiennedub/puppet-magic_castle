@@ -105,7 +105,7 @@ class profile::gpu::install::passthrough (
   else {
     exec {'disable_mig':
       command     => 'nvidia-mig-parted apply',
-      onlyif      => ['nvidia-mig-parted assert ; test $? -eq 1'],
+      onlyif      => ['command -v nvidia-mig-parted', 'nvidia-mig-parted assert ; test $? -eq 1'],
       environment => [
         'MIG_PARTED_CONFIG_FILE=/etc/nvidia-mig-manager/config.yaml',
         'MIG_PARTED_HOOKS_FILE=/etc/nvidia-mig-manager/puppet-hooks.yaml',
