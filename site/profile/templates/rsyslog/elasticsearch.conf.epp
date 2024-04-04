@@ -6,7 +6,9 @@ template(
   type="list"
   option.json="on"
 ) {
-<% if $template != '' { "$template" } else { -%>
+<% if $template != '' { -%>
+<%= $template %>
+<% } else { -%>
   constant(value="{")
   constant(value="\"@timestamp\":\"")
   property(name="timereported" dateFormat="rfc3339")
