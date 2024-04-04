@@ -6,6 +6,7 @@ template(
   type="list"
   option.json="on"
 ) {
+<% if $template != '' { "$template" } else { -%>
   constant(value="{")
   constant(value="\"@timestamp\":\"")
   property(name="timereported" dateFormat="rfc3339")
@@ -21,10 +22,8 @@ template(
   property(name="syslogtag")
   constant(value="\",\"message\":\"")
   property(name="msg" format="json")
-<% $tags.each |$key, $value| { -%>
-  constant(value="\",\"<%= $key %>\":\"<%= $value %>")
-<% } -%>
   constant(value="\"}")
+<% } -%>
 }
 
 <% if !$program_names.empty { -%>

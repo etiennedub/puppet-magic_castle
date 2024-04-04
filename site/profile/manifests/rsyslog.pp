@@ -78,6 +78,7 @@ class profile::rsyslog::elasticsearch
   String $index,
   String $username = '',
   String $password = '',
+  String $template = '',
   Array[String] $program_names = [],
   Hash[String, String] $tags = {}
 )
@@ -98,6 +99,7 @@ class profile::rsyslog::elasticsearch
         'password'      => $password,
         'program_names' => $program_names,
         'tags'          => $tags,
+        'template'      => $template,
     }),
   }
 }
