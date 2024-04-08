@@ -6,6 +6,18 @@ class profile::rsyslog::base {
     ensure => running,
     enable => true,
   }
+
+  $cloud_init_conf = @(EOT)
+    module(load="imfile")
+    input(type="imfile"
+          File="/var/log/cloud-init.log"
+          Tag="cloud-init"
+          reopenOnTruncate="on"
+          )
+    | EOT
+  file { '/etc/rsyslog.d/21-cloudinit.conf':
+    content => $cloud_init_conf,
+  }
 }
 
 class profile::rsyslog::client {
