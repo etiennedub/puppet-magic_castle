@@ -81,7 +81,6 @@ class profile::gpu::install (
 }
 
 class profile::gpu::install::passthrough (
-  Array[String] $packages,
   String $nvidia_driver_stream = '555-dkms'
 ) {
   $os = "rhel${::facts['os']['release']['major']}"
@@ -93,30 +92,20 @@ class profile::gpu::install::passthrough (
     path    => ['/usr/bin'],
   }
 
-  package { 'nvidia-stream':
-    ensure      => $nvidia_driver_stream,
-    name        => 'nvidia-driver',
-    provider    => dnfmodule,
-    enable_only => true,
-    require     => [
+  package { 'nvidia-driver':
+    ensure   => $nvidia_driver_stream,
+    provider => dnfmodule,
+    require  => [
+      Package['kernel-devel'],
       Exec['cuda-repo'],
+      Yumrepo['epel'],
     ]
   }
 
   $mig_profile = lookup("terraform.instances.${facts['networking']['hostname']}.specs.mig", Variant[Undef, Hash[String, Integer]], undef, {})
   class { 'profile::gpu::config::mig':
     mig_profile => $mig_profile,
-    require     => Package[$packages],
-  }
-
-  package { $packages:
-    ensure  => 'installed',
-    require => [
-      Package['nvidia-stream'],
-      Package['kernel-devel'],
-      Exec['cuda-repo'],
-      Yumrepo['epel'],
-    ],
+    require     => Package[nvidia-driver],
   }
 
   # Used by slurm-job-exporter to export GPU metrics
