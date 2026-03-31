@@ -1249,6 +1249,7 @@ This class installs and configure the Slurm controller daemon - **slurmctld**.
 | `tfe_token`         | Terraform Cloud API Token. Required to enable autoscaling.     | String |
 | `tfe_workspace`     | Terraform Cloud workspace id. Required to enable autoscaling.  | String |
 | `tfe_var_pool`      | Variable name in Terraform Cloud workspace to control autoscaling pool | String |
+| `tfe_api_url`       | Overwrite the Terraform API URL. | Optional[String] |
 | `selinux_context`   | SELinux context for jobs (Slurm > 20.11) | String |
 
 <details>
